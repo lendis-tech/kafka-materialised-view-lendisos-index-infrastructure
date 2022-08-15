@@ -1,0 +1,25 @@
+version: 0.2
+env:
+  variables:
+    SERVICE_REPO_NAME: "kafka-materialised-view-lendisos-index"
+    SERVICE_INFRA_FOLDER_NAME: "kafka-materialised-view-lendisos-index-infrastructure"
+    EKS_CONFIG_CONTEXT_NAME: "local"
+    ECR_REPO_NAME: "lendis/kafka-materialised-view-lendisos-index"
+  parameter-store:
+    EKS_CONFIG_CONTEXT: /lendis/eks-cluster/EKS_CONFIG_CONTEXT
+    EKS_CLUSTER_NAME: /lendis/eks-cluster/EKS_CLUSTER_NAME
+    GH_TOKEN: /lendis/github/GH_TOKEN
+    DOCKERHUB_USERNAME: /lendis/dockerhub/DOCKERHUB_USERNAME
+    DOCKERHUB_PASSWORD: /lendis/dockerhub/DOCKERHUB_PASSWORD
+    STAGING_NOTIFICATION_CHANNEL_URL: /lendis/slack/STAGING_NOTIFICATION_CHANNEL_URL
+    PRODUCTION_NOTIFICATION_CHANNEL_URL: /lendis/slack/PRODUCTION_NOTIFICATION_CHANNEL_URL
+phases:
+  build:
+    commands:
+      - cd ${CODEBUILD_SRC_DIR} && cd ../ && cd ./${SERVICE_INFRA_FOLDER_NAME} && cp ./scripts/*.sh ${CODEBUILD_SRC_DIR}/
+      - |
+        PIPELINE_FAILED="no"
+        bash -xe ${CODEBUILD_SRC_DIR}/deployment-script.sh || PIPELINE_FAILED="yes"
+        if [ ${PIPELINE_FAILED} = "yes" ]; then
+          bash ${CODEBUILD_SRC_DIR}/failed-script.sh
+        fi

@@ -1,0 +1,19 @@
+{{- $servicePorts := .Values.service.ports -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chart.prefixName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- range .Values.service.selectors }}
+    {{ printf "%s: %s" .key .value }}
+    {{- end }}
+  ports:
+  {{- range $servicePorts }}
+    - port: {{ .port }}
+      targetPort:  {{ .targetPort }}
+      protocol: {{ .protocol }}
+      name:  {{ .name }}
+  {{- end }}

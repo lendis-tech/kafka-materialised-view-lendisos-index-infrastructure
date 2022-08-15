@@ -1,0 +1,14 @@
+{{- $chartPrefixName := include "chart.prefixName" . -}}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $chartPrefixName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $chartPrefixName }}
+  minReplicas: {{ .Values.deployment.replicas }}
+  maxReplicas: {{ .Values.deployment.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.deployment.targetCPUUtilizationPercentage }}

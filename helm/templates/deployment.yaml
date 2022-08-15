@@ -1,0 +1,56 @@
+{{- $selectors := .Values.deployment.selectors -}}
+{{- $chartPrefixName := include "chart.prefixName" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $chartPrefixName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  progressDeadlineSeconds: {{ .Values.deployment.progressDeadlineSeconds }}
+  replicas: {{ .Values.deployment.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.deployment.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.deployment.rollingUpdate.maxSurge }}
+  selector:
+    matchLabels:
+      {{- range $selectors }}
+      {{ printf "%s: %s" .key .value }}
+      {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- range $selectors }}
+        {{ printf "%s: %s" .key .value }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ $chartPrefixName }}
+      containers:
+        - name: {{ .Values.deployment.containerName }}
+          image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            {{- range .Values.deployment.ports }}
+            - containerPort: {{ . }}
+            {{- end }}
+          {{- if .Values.deployment.resources }}
+          resources:
+            {{- toYaml .Values.deployment.resources | nindent 12 }}
+          {{- end }}
+          env:
+            {{- range $key,$value := .Values.envs }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $chartPrefixName }}
+                  key: {{ $key }}
+            {{- end }}
+      hostAliases:
+        {{- range .Values.deployment.hostAliases }}
+        - ip: {{ .ip }}
+          hostnames:
+            {{- range .hostnames }}
+            - {{ .}}
+            {{- end }}
+        {{- end}}

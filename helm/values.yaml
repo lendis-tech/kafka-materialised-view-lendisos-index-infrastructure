@@ -1,0 +1,43 @@
+stage: "development"
+account: 441772730001
+
+service:
+  type: ClusterIP
+  selectors:
+    - key: app
+      value: "kafka-materialised-view-lendisos-index"
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+envs:
+
+image:
+  tag: ""
+  repository: ""
+  pullPolicy: Always
+
+deployment:
+  progressDeadlineSeconds: 30
+  targetCPUUtilizationPercentage: 50
+  containerName: "kafka-materialised-view-lendisos-index"
+  replicas: 1
+  maxReplicas: 1
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+  ports:
+    - 3000
+  selectors:
+    - key: app
+      value: "kafka-materialised-view-lendisos-index"
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "250m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  hostAliases:

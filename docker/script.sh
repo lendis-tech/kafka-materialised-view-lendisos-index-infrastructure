@@ -14,7 +14,7 @@ upload_file() {
 
     RELATIVE_PATH=$(echo ${FILE} | sed -r 's#/app/##g')
 
-    aws s3 mv "${FILE}" "s3://lendis-eks-source-maps/${SERVICE_NAME}/${STAGE}/${RELATIVE_PATH}" --region ${AWS_REGION}
+    aws s3 mv "${FILE}" "s3://source-maps-lendis/${SERVICE_NAME}/${STAGE}/${RELATIVE_PATH}" --region ${AWS_REGION}
 }
 
 export -f upload_file

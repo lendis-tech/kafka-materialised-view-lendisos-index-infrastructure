@@ -42,7 +42,7 @@ COPY --from=init ${CONTAINER_WORDIR} .
 
 RUN pwd
 
-RUN find /app -type f -name '*.js' -not -name '*.js.map' -not -path "/app/node_modules/*" -exec sed -i -e 's#sourceMappingURL=#sourceMappingURL=https://lendis-eks-source-maps.s3.us-east-1.amazonaws.com/'${SERVICE_NAME}'/'${STAGE}'/#g' "{}" \;
+RUN find /app -type f -name '*.js' -not -name '*.js.map' -not -path "/app/node_modules/*" -exec sed -i -e 's#sourceMappingURL=#sourceMappingURL=https://source-maps.lendis.io/'${SERVICE_NAME}'/'${STAGE}'/#g' "{}" \;
 
 RUN rm -rf /app/**/*.js-e
 

@@ -58,7 +58,7 @@ build_application() {
 
     cd ${CODEBUILD_SRC_DIR} && cd ../ && cd ./${SERVICE_INFRA_FOLDER_NAME}/docker
     
-    CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::441772730001:role/upload-eks-source-maps-role --role-session-name codebuild)
+    CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::710196519714:role/upload-eks-source-maps-role --role-session-name codebuild)
     
     AWS_ACCESS_KEY_ID=$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')
     AWS_SECRET_ACCESS_KEY=$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')

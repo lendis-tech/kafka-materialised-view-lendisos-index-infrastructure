@@ -18,8 +18,13 @@ if [ ${ENVIRONMENT} = "production" ]; then
     LOCATION="PRODUCTION"
     SLACK_URL=${PRODUCTION_NOTIFICATION_CHANNEL_URL}
 else
-    LOCATION="STAGING"
     SLACK_URL=${STAGING_NOTIFICATION_CHANNEL_URL}
+
+    if [ ${ENVIRONMENT} = "development" ]; then
+        LOCATION="STAGING"
+    else
+        LOCATION=$(echo ${ENVIRONMENT} | tr '[:lower:]' '[:upper:]' )
+    fi
 fi
 
 PIPELINE_NAME=$(echo ${CODEBUILD_BUILD_ID} | grep -o ".*:" | sed -r 's#:##g')
